@@ -14,6 +14,19 @@ public class PrimativeBuffer {
 		}
 	}
 	
+	public RenderPrimative get(int index) {
+		RenderPrimative primative;
+		if (index >= 0 && index < mTop)
+			primative = mRenderPrimatives[index];
+		else
+			primative = null;
+		return primative;
+	}
+	
+	public int size() {
+		return mTop;
+	}
+	
 	public void reset() {
 		mTop = 0;
 	}

@@ -5,24 +5,34 @@ import android.opengl.GLSurfaceView;
 
 
 public class GenericRenderer {
-		
-	private GLSurfaceView.Renderer renderer;
+	
+	private RenderConsumer mRenderer;
 	private PrimativeBuffer mRenderPrimatives = new PrimativeBuffer();
 	
+	public GenericRenderer() {
+		super();
+        switch(1) {
+        case 1:
+        	mRenderer = new OGL11Renderer();
+        	break;
+        case 2:
+        	mRenderer = new OGL2Renderer();
+        	break;
+        }
+	}
+
 	public GLSurfaceView getGenericView() {
 		SystemManager sysMgr = SystemManager.sharedManager();
 		Context context = sysMgr.getContext();
         GLSurfaceView view  = new GLSurfaceView(context);
         switch(1) {
         case 1:
-        	renderer = new OGL11Renderer();
             view.setEGLContextClientVersion(1);
-       		view.setRenderer(renderer);
+       		view.setRenderer(mRenderer);
         	break;
         case 2:
-        	renderer = new OGL2Renderer();
             view.setEGLContextClientVersion(2);
-       		view.setRenderer(renderer);
+       		view.setRenderer(mRenderer);
         	break;
         }
 		return view;
@@ -30,5 +40,9 @@ public class GenericRenderer {
 	
 	public void resetPrimatives() {
 		mRenderPrimatives.reset();
+	}
+	
+	public void setGraphicsCallback(GraphicsCompletedCallback callback) {
+		mRenderer.setGraphicsCallback(callback);
 	}
 }

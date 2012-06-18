@@ -3,11 +3,11 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.opengl.GLES20;
-import android.opengl.GLSurfaceView;
 
 
-public class OGL2Renderer implements GLSurfaceView.Renderer {
-
+public class OGL2Renderer implements RenderConsumer {
+	private GraphicsCompletedCallback mGraphicsCallback;
+	
 	public void onDrawFrame(GL10 arg0) {
 		// TODO Auto-generated method stub
         GLES20.glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
@@ -22,7 +22,10 @@ public class OGL2Renderer implements GLSurfaceView.Renderer {
 	public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         GLES20.glEnable(GL10.GL_BLEND);
 		GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-		
+		mGraphicsCallback.done();
 	}
 
+	public void setGraphicsCallback(GraphicsCompletedCallback callback) {
+		mGraphicsCallback = callback;
+	}
 }

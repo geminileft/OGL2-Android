@@ -4,30 +4,31 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 
-public class OGL11Renderer implements GLSurfaceView.Renderer {
+public class OGL11Renderer implements RenderConsumer {
 
-	private RenderPrimative mPrimative;
+	private PrimativeBuffer mPrimBuffer = new PrimativeBuffer();
+	private PrimativeBuffer mBackBuffer = new PrimativeBuffer();
+	private GraphicsCompletedCallback mGraphicsCallback;
 	
 	public void onSurfaceCreated(GL10 gl, EGLConfig arg1) {
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);			
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-
-		mPrimative = new RenderPrimative();
+		
+		RenderPrimative primative;
+		primative = new RenderPrimative();
 		int mTextures[] = new int[1];
 		gl.glGenTextures(1, mTextures, 0);
-        mPrimative.mTextureName = mTextures[0];		
+        primative.mTextureName = mTextures[0];		
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextures[0]);
 		
         gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
@@ -68,9 +69,9 @@ public class OGL11Renderer implements GLSurfaceView.Renderer {
 		};
 		ByteBuffer byteBuf = ByteBuffer.allocateDirect(coordinates.length * 4);
 		byteBuf.order(ByteOrder.nativeOrder());
-		mPrimative.mTextureBuffer = byteBuf.asFloatBuffer();
-		mPrimative.mTextureBuffer.put(coordinates);
-		mPrimative.mTextureBuffer.position(0);
+		primative.mTextureBuffer = byteBuf.asFloatBuffer();
+		primative.mTextureBuffer.put(coordinates);
+		primative.mTextureBuffer.position(0);
 
 		final float leftX = -(float)width / 2;
 		final float rightX = leftX + width;
@@ -86,15 +87,19 @@ public class OGL11Renderer implements GLSurfaceView.Renderer {
 	    
    		byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
 		byteBuf.order(ByteOrder.nativeOrder());
-		mPrimative.mVertexBuffer = byteBuf.asFloatBuffer();
-		mPrimative.mVertexBuffer.put(vertices);
-		mPrimative.mVertexBuffer.position(0);
+		primative.mVertexBuffer = byteBuf.asFloatBuffer();
+		primative.mVertexBuffer.put(vertices);
+		primative.mVertexBuffer.position(0);
 		
-		mPrimative.mR = 1.0f;
-		mPrimative.mG = 0.0f;
-		mPrimative.mB = 1.0f;
-		mPrimative.mA = 1.0f;
-		gl.glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+		primative.mR = 1.0f;
+		primative.mG = 0.0f;
+		primative.mB = 1.0f;
+		primative.mA = 1.0f;
+		
+		mBackBuffer.add(primative);
+		gl.glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
+		
+		mGraphicsCallback.done();
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -110,18 +115,33 @@ public class OGL11Renderer implements GLSurfaceView.Renderer {
 	
 	public void onDrawFrame(GL10 gl) {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, mPrimative.mVertexBuffer);
-    	gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mPrimative.mTextureBuffer);
-   
-		gl.glEnable(GL10.GL_TEXTURE_2D);
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, mPrimative.mTextureName);
-
-		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);	
+		copyToBuffer();
+		final int size = mPrimBuffer.size();
+		for (int i = 0;i < size;++i) {
+			RenderPrimative primative = mPrimBuffer.get(i);
+			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, primative.mVertexBuffer);
+	    	gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, primative.mTextureBuffer);
+	   
+			gl.glEnable(GL10.GL_TEXTURE_2D);
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, primative.mTextureName);
+	
+			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);		
+		}
 
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 	}
 	
-	public void copyToBuffer(RenderPrimative primatives[], int count) {
-		
+	public void copyToBuffer() {
+		synchronized(mBackBuffer) {
+			mPrimBuffer.reset();
+			int size = mBackBuffer.size();
+			for (int i = 0;i < size;++i) {
+				mPrimBuffer.add(mBackBuffer.get(i).copy());
+			}
+		}
+	}
+
+	public void setGraphicsCallback(GraphicsCompletedCallback callback) {
+		mGraphicsCallback = callback;
 	}
 }
