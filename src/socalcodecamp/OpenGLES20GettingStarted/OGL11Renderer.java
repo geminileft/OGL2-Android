@@ -17,6 +17,7 @@ public class OGL11Renderer implements RenderConsumer {
 	private PrimativeBuffer mPrimBuffer = new PrimativeBuffer();
 	private PrimativeBuffer mBackBuffer = new PrimativeBuffer();
 	private GraphicsCompletedCallback mGraphicsCallback;
+	private RenderProvider mRenderProvider;
 	
 	public void onSurfaceCreated(GL10 gl, EGLConfig arg1) {
 		gl.glEnable(GL10.GL_BLEND);
@@ -48,7 +49,7 @@ public class OGL11Renderer implements RenderConsumer {
 		RenderPrimative primative;
 		primative = new RenderPrimative();
 		primative.mTextureName = mgr.bitmapTexture(bitmap);
-
+		bitmap.recycle();
 		final float coordinates[] = {    		
 				// Mapping coordinates for the vertices
 				0.0f, 1.0f,		// top left		(V2)
@@ -80,13 +81,13 @@ public class OGL11Renderer implements RenderConsumer {
 		primative.mVertexBuffer.put(vertices);
 		primative.mVertexBuffer.position(0);
 		
-		primative.mR = 1.0f;
-		primative.mG = 0.0f;
+		primative.mR = 0.75f;
+		primative.mG = 0.5f;
 		primative.mB = 1.0f;
 		primative.mA = 1.0f;
 		
 		mBackBuffer.add(primative);
-		gl.glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
+		gl.glClearColor(0.75f, 0.5f, 0.3f, 1.0f);
 		
 		mGraphicsCallback.done();
 	}
@@ -103,15 +104,15 @@ public class OGL11Renderer implements RenderConsumer {
 	}
 	
 	public void onDrawFrame(GL10 gl) {
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		copyToBuffer();
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		gl.glEnable(GL10.GL_TEXTURE_2D);
 		final int size = mPrimBuffer.size();
 		for (int i = 0;i < size;++i) {
 			RenderPrimative primative = mPrimBuffer.get(i);
 			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, primative.mVertexBuffer);
 	    	gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, primative.mTextureBuffer);
 	   
-			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, primative.mTextureName);
 	
 			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);		
@@ -122,6 +123,8 @@ public class OGL11Renderer implements RenderConsumer {
 	
 	public void copyToBuffer() {
 		synchronized(mBackBuffer) {
+			//mBackBuffer.reset();
+			//mRenderProvider.copyToBuffer(mBackBuffer);
 			mPrimBuffer.reset();
 			int size = mBackBuffer.size();
 			for (int i = 0;i < size;++i) {
@@ -132,5 +135,9 @@ public class OGL11Renderer implements RenderConsumer {
 
 	public void setGraphicsCallback(GraphicsCompletedCallback callback) {
 		mGraphicsCallback = callback;
+	}
+	
+	public void setRenderProvider(RenderProvider provider) {
+		mRenderProvider = provider;
 	}
 }

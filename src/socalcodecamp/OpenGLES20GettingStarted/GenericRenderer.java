@@ -45,4 +45,8 @@ public class GenericRenderer {
 	public void setGraphicsCallback(GraphicsCompletedCallback callback) {
 		mRenderer.setGraphicsCallback(callback);
 	}
+
+	public void setRenderProvider(RenderProvider provider) {
+		mRenderer.setRenderProvider(provider);
+	}
 }

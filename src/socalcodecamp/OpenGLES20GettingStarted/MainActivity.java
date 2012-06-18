@@ -5,12 +5,9 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.opengl.GLUtils;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
@@ -21,6 +18,7 @@ public class MainActivity extends Activity implements Runnable, RenderProvider, 
 	private GenericRenderer mRenderer;
 	private RenderPrimative mPrimative;
 	private PrimativeBuffer mPrimatives = new PrimativeBuffer();
+	private PrimativeBuffer mCopyBuffer = new PrimativeBuffer();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,11 +29,13 @@ public class MainActivity extends Activity implements Runnable, RenderProvider, 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mRenderer = new GenericRenderer();
         mRenderer.setGraphicsCallback(this);
+        mRenderer.setRenderProvider(this);
         setContentView(mRenderer.getGenericView());
     }
 
     public void init() {
 		mPrimative = new RenderPrimative();
+		TextureManager texMgr = TextureManager.sharedManager();
         SystemManager sysMgr = SystemManager.sharedManager();
         InputStream is = sysMgr.getContext().getResources().openRawResource(R.drawable.mg);
 		Bitmap bitmap = null;
@@ -54,11 +54,9 @@ public class MainActivity extends Activity implements Runnable, RenderProvider, 
 		
 		int height = bitmap.getHeight();
 		int width = bitmap.getWidth();
-
-		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
-
-        bitmap.recycle();
 		
+		mPrimative.mTextureName = texMgr.bitmapTexture(bitmap);
+        bitmap.recycle();
 		
 		final float coordinates[] = {    		
 				// Mapping coordinates for the vertices
@@ -100,13 +98,25 @@ public class MainActivity extends Activity implements Runnable, RenderProvider, 
 	public void run() {
 		init();
 		while (true) {
-			Log.v("Here", "here");			
+			Log.v("Here", "here");
+			mPrimatives.reset();
+			mPrimatives.add(mPrimative);
+			synchronized(mCopyBuffer) {
+				mCopyBuffer.reset();
+				for (int i = 0;i < mPrimatives.size();++i) {
+					mCopyBuffer.add(mPrimatives.get(i).copy());
+				}
+			}
 		}
 	}
 
 	public void copyToBuffer(PrimativeBuffer buffer) {
+		synchronized(mCopyBuffer) {
+			for (int i = 0;i < mCopyBuffer.size();++i) {
+				buffer.add(mCopyBuffer.get(i).copy());
+			}
+		}
 		// TODO Auto-generated method stub
-		
 	}
 	
 	public void done() {
