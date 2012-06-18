@@ -54,8 +54,10 @@ public class MainActivity extends Activity implements Runnable, RenderProvider, 
 		
 		int height = bitmap.getHeight();
 		int width = bitmap.getWidth();
-        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
-		bitmap.recycle();
+
+		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+
+        bitmap.recycle();
 		
 		
 		final float coordinates[] = {    		

@@ -24,29 +24,17 @@ public class OGL11Renderer implements RenderConsumer {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		
-		RenderPrimative primative;
-		primative = new RenderPrimative();
-		int mTextures[] = new int[1];
-		gl.glGenTextures(1, mTextures, 0);
-        primative.mTextureName = mTextures[0];		
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextures[0]);
-		
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+		TextureManager mgr = TextureManager.sharedManager();
+		mgr.setGL(gl);
+		mgr.setVersion(1);
 
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-
-        gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE); //GL10.GL_REPLACE);
         SystemManager sysMgr = SystemManager.sharedManager();
         InputStream is = sysMgr.getContext().getResources().openRawResource(R.drawable.mg);
 		Bitmap bitmap = null;
 		try {
-			//BitmapFactory is an Android graphics utility for images
 			bitmap = BitmapFactory.decodeStream(is);
 
 		} finally {
-			//Always clear and close
 			try {
 				is.close();
 				is = null;
@@ -56,10 +44,11 @@ public class OGL11Renderer implements RenderConsumer {
 		
 		int height = bitmap.getHeight();
 		int width = bitmap.getWidth();
-        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
-		bitmap.recycle();
 		
-		
+		RenderPrimative primative;
+		primative = new RenderPrimative();
+		primative.mTextureName = mgr.bitmapTexture(bitmap);
+
 		final float coordinates[] = {    		
 				// Mapping coordinates for the vertices
 				0.0f, 1.0f,		// top left		(V2)
