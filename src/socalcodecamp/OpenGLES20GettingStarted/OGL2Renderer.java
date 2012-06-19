@@ -21,7 +21,6 @@ public class OGL2Renderer implements RenderConsumer {
 	public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         GLES20.glEnable(GL10.GL_BLEND);
 		GLES20.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        GLES20.glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         String vertexSource;
         String fragmentSource;
 		TEShaderProgram program;
@@ -46,7 +45,7 @@ public class OGL2Renderer implements RenderConsumer {
 		int[] params = new int[1];
 		GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, params, 0);
 		mScreenFrameBuffer = params[0];
-		mScreenTarget = new TERenderTarget(mScreenFrameBuffer, 0.0f, 0.0f, 1.0f, 1.0f);
+		mScreenTarget = new TERenderTarget(mScreenFrameBuffer, 0.75f, 0.5f, 0.3f, 1.0f);
 
 		TextureManager mgr = TextureManager.sharedManager();
 		mgr.setVersion(2);

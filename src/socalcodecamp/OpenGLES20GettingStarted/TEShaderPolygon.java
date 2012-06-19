@@ -25,7 +25,7 @@ public class TEShaderPolygon extends TEShaderProgram {
 	        GLES20.glVertexAttribPointer(vertexHandle, 2, GLES20.GL_FLOAT, false, 0, p.mVertexBuffer);
 	        GLES20.glUniform4f(colorHandle, p.mR, p.mG, p.mB, p.mA);
 	        GLES20.glVertexAttrib2f(posHandle, p.mX, p.mY);
-	        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, p.vertexCount);        
+	        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, p.vertexCount);        
 	    }
 	    deactivate();
 	}
