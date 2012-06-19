@@ -5,13 +5,13 @@ import android.opengl.GLSurfaceView;
 
 
 public class GenericRenderer {
+	private final int RENDER_VERSION = 1;
 	
 	private RenderConsumer mRenderer;
-	private PrimativeBuffer mRenderPrimatives = new PrimativeBuffer();
 	
 	public GenericRenderer() {
 		super();
-        switch(1) {
+        switch(RENDER_VERSION) {
         case 1:
         	mRenderer = new OGL11Renderer();
         	break;
@@ -25,7 +25,7 @@ public class GenericRenderer {
 		SystemManager sysMgr = SystemManager.sharedManager();
 		Context context = sysMgr.getContext();
         GLSurfaceView view  = new GLSurfaceView(context);
-        switch(1) {
+        switch(RENDER_VERSION) {
         case 1:
             view.setEGLContextClientVersion(1);
        		view.setRenderer(mRenderer);
@@ -36,10 +36,6 @@ public class GenericRenderer {
         	break;
         }
 		return view;
-	}
-	
-	public void resetPrimatives() {
-		mRenderPrimatives.reset();
 	}
 	
 	public void setRenderProvider(RenderProvider provider) {
