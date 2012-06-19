@@ -44,7 +44,6 @@ public abstract class TEShaderProgram {
     public final void activate(TERenderTarget target) {
         
         GLES20.glUseProgram(mProgramId);
-        checkGlError("glUseProgram");
         
         int count = mAttributes.size();
         String attribute = "";
@@ -54,7 +53,6 @@ public abstract class TEShaderProgram {
 	        	attribute = mAttributes.get(i);
 	            int handle = GLES20.glGetAttribLocation(mProgramId, attribute);
 	            GLES20.glEnableVertexAttribArray(handle);
-	            checkGlError("glEnableVertexAttribArray");
 	        	++i;
         	}
         }
