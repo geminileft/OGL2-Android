@@ -74,7 +74,6 @@ public class TextureManager {
 	}
 	
 	public void loadTextures() {
-		TextureManager texMgr = TextureManager.sharedManager();
         SystemManager sysMgr = SystemManager.sharedManager();
         synchronized(mTexturePrimatives) {
 			if (!mTexturePrimatives.isEmpty()) {
@@ -93,7 +92,7 @@ public class TextureManager {
 						}
 					}
 					
-					int textureId = texMgr.bitmapTexture(bitmap);
+					int textureId = bitmapTexture(bitmap);
 					bitmap.recycle();
 					mTextures.put(key, textureId);
 					LinkedList<RenderPrimative> primatives = mTexturePrimatives.get(key);
