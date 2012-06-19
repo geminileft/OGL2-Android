@@ -7,7 +7,7 @@ import android.opengl.GLES20;
 
 public class OGL2Renderer implements RenderConsumer {
 	private GraphicsCompletedCallback mGraphicsCallback;
-	private RenderProvider mRenderProvider;
+	//private RenderProvider mRenderProvider;
 	
 	public void onDrawFrame(GL10 arg0) {
 		// TODO Auto-generated method stub
@@ -31,6 +31,6 @@ public class OGL2Renderer implements RenderConsumer {
 	}
 
 	public void setRenderProvider(RenderProvider provider) {
-		mRenderProvider = provider;
+		//mRenderProvider = provider;
 	}
 }

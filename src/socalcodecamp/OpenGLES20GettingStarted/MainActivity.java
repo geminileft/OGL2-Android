@@ -1,19 +1,15 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class MainActivity extends Activity implements Runnable, RenderProvider, GraphicsCompletedCallback {
+public class MainActivity extends Activity implements Runnable, RenderProvider {
     /** Called when the activity is first created. */
 	private GenericRenderer mRenderer;
 	private RenderPrimative mPrimative;
@@ -28,7 +24,6 @@ public class MainActivity extends Activity implements Runnable, RenderProvider, 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mRenderer = new GenericRenderer();
-        mRenderer.setGraphicsCallback(this);
         mRenderer.setRenderProvider(this);
         setContentView(mRenderer.getGenericView());
     }
@@ -36,7 +31,6 @@ public class MainActivity extends Activity implements Runnable, RenderProvider, 
     public void init() {
 		mPrimative = new RenderPrimative();
 		TextureManager texMgr = TextureManager.sharedManager();
-        SystemManager sysMgr = SystemManager.sharedManager();
 		mPrimative.mTextureName = texMgr.resourceTexture(R.drawable.mg, mPrimative);
 		
 		final float coordinates[] = {    		
@@ -102,8 +96,9 @@ public class MainActivity extends Activity implements Runnable, RenderProvider, 
 		// TODO Auto-generated method stub
 	}
 	
-	public void done() {
+	public void renderInitialized() {
         Thread thread = new Thread(this);
         thread.start();		
 	}
+
 }

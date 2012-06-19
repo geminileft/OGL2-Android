@@ -1,8 +1,5 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -10,7 +7,6 @@ public class OGL11Renderer implements RenderConsumer {
 
 	private PrimativeBuffer mPrimBuffer = new PrimativeBuffer();
 	private PrimativeBuffer mBackBuffer = new PrimativeBuffer();
-	private GraphicsCompletedCallback mGraphicsCallback;
 	private RenderProvider mRenderProvider;
 	
 	public void onSurfaceCreated(GL10 gl, EGLConfig arg1) {
@@ -23,53 +19,9 @@ public class OGL11Renderer implements RenderConsumer {
 		mgr.setGL(gl);
 		mgr.setVersion(1);
 
-		RenderPrimative primative;
-		primative = new RenderPrimative();
-		mgr.resourceTexture(R.drawable.mg, primative);
-		//primative.mTextureName = mgr.bitmapTexture(bitmap);
-		final float coordinates[] = {    		
-				// Mapping coordinates for the vertices
-				0.0f, 1.0f,		// top left		(V2)
-				0.0f, 0.0f,		// bottom left	(V1)
-				1.0f, 1.0f,		// top right	(V4)
-				1.0f, 0.0f		// bottom right	(V3)
-		};
-		ByteBuffer byteBuf = ByteBuffer.allocateDirect(coordinates.length * 4);
-		byteBuf.order(ByteOrder.nativeOrder());
-		primative.mTextureBuffer = byteBuf.asFloatBuffer();
-		primative.mTextureBuffer.put(coordinates);
-		primative.mTextureBuffer.position(0);
-
-		int width = 64;
-		int height = 64;
-		
-		final float leftX = -(float)width / 2;
-		final float rightX = leftX + width;
-		final float bottomY = -(float)height / 2;
-		final float topY = bottomY + height;
-
-		final float vertices[] = {
-	    		leftX, bottomY
-	    		, leftX, topY
-	    		, rightX, bottomY
-	    		, rightX, topY
-	    };
-	    
-   		byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
-		byteBuf.order(ByteOrder.nativeOrder());
-		primative.mVertexBuffer = byteBuf.asFloatBuffer();
-		primative.mVertexBuffer.put(vertices);
-		primative.mVertexBuffer.position(0);
-		
-		primative.mR = 0.75f;
-		primative.mG = 0.5f;
-		primative.mB = 1.0f;
-		primative.mA = 1.0f;
-		
-		//mBackBuffer.add(primative);
 		gl.glClearColor(0.75f, 0.5f, 0.3f, 1.0f);
 		
-		mGraphicsCallback.done();
+		mRenderProvider.renderInitialized();
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -117,10 +69,6 @@ public class OGL11Renderer implements RenderConsumer {
 		}
 	}
 
-	public void setGraphicsCallback(GraphicsCompletedCallback callback) {
-		mGraphicsCallback = callback;
-	}
-	
 	public void setRenderProvider(RenderProvider provider) {
 		mRenderProvider = provider;
 	}
