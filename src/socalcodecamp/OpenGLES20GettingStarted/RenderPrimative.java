@@ -15,6 +15,8 @@ public class RenderPrimative {
 	public float mX;
 	public float mY;
 	
+	public int vertexCount = 4;
+	
 	public int mTextureName;
 	
 	public RenderPrimative copy() {

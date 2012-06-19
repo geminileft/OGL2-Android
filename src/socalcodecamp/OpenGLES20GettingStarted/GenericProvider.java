@@ -58,8 +58,8 @@ public class GenericProvider implements Runnable, RenderProvider {
 		mPolyPrimative = new RenderPrimative();
 		mPolyPrimative.mVertexBuffer = vertexBuffer;
 		mPolyPrimative.mR = 1.0f;
-		mPolyPrimative.mG = 0.0f;
-		mPolyPrimative.mB = 0.0f;
+		mPolyPrimative.mG = 0.2f;
+		mPolyPrimative.mB = 0.8f;
 		mPolyPrimative.mA = 1.0f;
 		mPolyPrimative.mX = 120.0f;
 		mPolyPrimative.mY = 0.0f;
