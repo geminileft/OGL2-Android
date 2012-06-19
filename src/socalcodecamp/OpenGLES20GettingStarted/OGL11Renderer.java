@@ -1,11 +1,19 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
+import java.util.HashMap;
+import java.util.Set;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class OGL11Renderer implements RenderConsumer {
 
-	private PrimativeBuffer mPrimBuffer = new PrimativeBuffer();
+	private enum PrimativeType {
+		PolyPrimative
+		, TexPrimative
+	};
+	
+	private HashMap<PrimativeType, PrimativeBuffer> mPrimBuffer = new HashMap<PrimativeType, PrimativeBuffer>();
 	private PrimativeBuffer mBackBuffer = new PrimativeBuffer();
 	private RenderProvider mRenderProvider;
 	
@@ -22,6 +30,8 @@ public class OGL11Renderer implements RenderConsumer {
 		gl.glClearColor(0.75f, 0.5f, 0.3f, 1.0f);
 		
 		mRenderProvider.renderInitialized();
+		mPrimBuffer.put(PrimativeType.PolyPrimative, new PrimativeBuffer());
+		mPrimBuffer.put(PrimativeType.TexPrimative, new PrimativeBuffer());
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -40,31 +50,49 @@ public class OGL11Renderer implements RenderConsumer {
 		texMgr.loadTextures();
 		copyToBuffer();
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		
+		textureRender(gl, mPrimBuffer.get(PrimativeType.TexPrimative));
+	}
+	
+	public void textureRender(GL10 gl, PrimativeBuffer buffer) {
 		gl.glEnable(GL10.GL_TEXTURE_2D);
-		final int size = mPrimBuffer.size();
+		final int size = buffer.size();
 		for (int i = 0;i < size;++i) {
-			RenderPrimative primative = mPrimBuffer.get(i);
+			RenderPrimative primative = buffer.get(i);
 			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, primative.mVertexBuffer);
 	    	gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, primative.mTextureBuffer);
-	   
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, primative.mTextureName);
-	
-			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);		
+			
+			gl.glPushMatrix();
+			gl.glTranslatef(primative.mX, primative.mY, 0.0f);
+			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+			gl.glPopMatrix();
 		}
-
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 	}
 	
 	public void copyToBuffer() {
 		synchronized(mBackBuffer) {
-			if (true) {
-				mBackBuffer.reset();
-				mRenderProvider.copyToBuffer(mBackBuffer);
-			}
-			mPrimBuffer.reset();
-			int size = mBackBuffer.size();
-			for (int i = 0;i < size;++i) {
-				mPrimBuffer.add(mBackBuffer.get(i).copy());
+			mBackBuffer.reset();
+			mRenderProvider.copyToBuffer(mBackBuffer);
+			synchronized(mPrimBuffer) {
+				Set<PrimativeType> keys = mPrimBuffer.keySet();
+				for (PrimativeType key : keys) {
+					mPrimBuffer.get(key).reset();
+				}
+				
+				int size = mBackBuffer.size();
+				for (int i = 0;i < size;++i) {
+					RenderPrimative primative = mBackBuffer.get(i).copy();
+					PrimativeType ptype;
+					if (primative.mTextureBuffer == null) {
+						ptype = PrimativeType.PolyPrimative;
+					} else {
+						ptype = PrimativeType.TexPrimative;
+					}
+					
+					mPrimBuffer.get(ptype).add(primative);
+				}
 			}
 		}
 	}

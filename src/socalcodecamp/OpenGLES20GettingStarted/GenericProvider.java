@@ -2,6 +2,7 @@ package socalcodecamp.OpenGLES20GettingStarted;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 
 public class GenericProvider implements Runnable, RenderProvider {
 	private RenderPrimative mPrimative;
@@ -26,8 +27,8 @@ public class GenericProvider implements Runnable, RenderProvider {
 		mPrimative.mTextureBuffer.put(coordinates);
 		mPrimative.mTextureBuffer.position(0);
 
-		final int width = 64;
-		final int height = 64;
+		final int width = 240;
+		final int height = 240;
 		final float leftX = -(float)width / 2;
 		final float rightX = leftX + width;
 		final float bottomY = -(float)height / 2;
@@ -42,21 +43,25 @@ public class GenericProvider implements Runnable, RenderProvider {
 	    
    		byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
 		byteBuf.order(ByteOrder.nativeOrder());
-		mPrimative.mVertexBuffer = byteBuf.asFloatBuffer();
-		mPrimative.mVertexBuffer.put(vertices);
-		mPrimative.mVertexBuffer.position(0);
+		FloatBuffer vertexBuffer = byteBuf.asFloatBuffer();
+		vertexBuffer.put(vertices);
+		vertexBuffer.position(0);
+		mPrimative.mVertexBuffer = vertexBuffer;
 		
 		mPrimative.mR = 1.0f;
 		mPrimative.mG = 0.0f;
 		mPrimative.mB = 1.0f;
 		mPrimative.mA = 1.0f;
+		
+		mPrimative.mX = -120.0f;
+		mPrimative.mY = 0.0f;
     }
     
 	public void run() {
 		init();
 		while (true) {
 			mPrimatives.reset();
-			mPrimatives.add(mPrimative);
+			frame();				
 			synchronized(mCopyBuffer) {
 				mCopyBuffer.reset();
 				for (int i = 0;i < mPrimatives.size();++i) {
@@ -65,7 +70,11 @@ public class GenericProvider implements Runnable, RenderProvider {
 			}
 		}
 	}
-
+	
+	public void frame() {
+		mPrimatives.add(mPrimative);
+	}
+	
 	public void copyToBuffer(PrimativeBuffer buffer) {
 		synchronized(mCopyBuffer) {
 			for (int i = 0;i < mCopyBuffer.size();++i) {
@@ -79,5 +88,4 @@ public class GenericProvider implements Runnable, RenderProvider {
         Thread thread = new Thread(this);
         thread.start();		
 	}
-
 }

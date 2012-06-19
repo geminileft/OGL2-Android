@@ -12,6 +12,9 @@ public class RenderPrimative {
 	public float mB;
 	public float mA;
 	
+	public float mX;
+	public float mY;
+	
 	public int mTextureName;
 	
 	public RenderPrimative copy() {
@@ -20,6 +23,9 @@ public class RenderPrimative {
 		primative.mG = mG;
 		primative.mB = mB;
 		primative.mA = mA;
+		
+		primative.mX = mX;
+		primative.mY = mY;
 		
 		primative.mVertexBuffer = mVertexBuffer;
 		primative.mTextureBuffer = mTextureBuffer;
