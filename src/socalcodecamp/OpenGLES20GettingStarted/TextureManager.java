@@ -10,6 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
 
@@ -41,6 +42,18 @@ public class TextureManager {
 	
 	        mGL.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE); //GL10.GL_REPLACE);
 	        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);		
+		} else if (mVersion == 2) {
+			GLES20.glGenTextures(1, mTextures, 0);
+			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextures[0]);
+			
+	        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+	        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+	
+	        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+	        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+	
+	        //GLES20.glTexEnvf(GLES20.GL_TEXTURE_ENV, GLES20.GL_TEXTURE_ENV_MODE, GLES20.GL_MODULATE); //GL10.GL_REPLACE);
+	        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
 		}
 
 		return mTextures[0];
