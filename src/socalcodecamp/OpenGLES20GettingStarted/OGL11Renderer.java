@@ -10,7 +10,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.opengl.GLUtils;
 
 public class OGL11Renderer implements RenderConsumer {
 
@@ -104,6 +103,8 @@ public class OGL11Renderer implements RenderConsumer {
 	}
 	
 	public void onDrawFrame(GL10 gl) {
+		TextureManager texMgr = TextureManager.sharedManager();
+		texMgr.loadTextures();
 		copyToBuffer();
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		gl.glEnable(GL10.GL_TEXTURE_2D);
