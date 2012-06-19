@@ -37,26 +37,7 @@ public class MainActivity extends Activity implements Runnable, RenderProvider, 
 		mPrimative = new RenderPrimative();
 		TextureManager texMgr = TextureManager.sharedManager();
         SystemManager sysMgr = SystemManager.sharedManager();
-        InputStream is = sysMgr.getContext().getResources().openRawResource(R.drawable.mg);
-		Bitmap bitmap = null;
-		try {
-			//BitmapFactory is an Android graphics utility for images
-			bitmap = BitmapFactory.decodeStream(is);
-
-		} finally {
-			//Always clear and close
-			try {
-				is.close();
-				is = null;
-			} catch (IOException e) {
-			}
-		}
-		
-		int height = bitmap.getHeight();
-		int width = bitmap.getWidth();
-		
-		mPrimative.mTextureName = texMgr.bitmapTexture(bitmap);
-        bitmap.recycle();
+		mPrimative.mTextureName = texMgr.resourceTexture(R.drawable.mg, mPrimative);
 		
 		final float coordinates[] = {    		
 				// Mapping coordinates for the vertices
@@ -71,6 +52,8 @@ public class MainActivity extends Activity implements Runnable, RenderProvider, 
 		mPrimative.mTextureBuffer.put(coordinates);
 		mPrimative.mTextureBuffer.position(0);
 
+		final int width = 64;
+		final int height = 64;
 		final float leftX = -(float)width / 2;
 		final float rightX = leftX + width;
 		final float bottomY = -(float)height / 2;

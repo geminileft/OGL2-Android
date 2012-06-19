@@ -1,15 +1,10 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 public class OGL11Renderer implements RenderConsumer {
 
@@ -28,27 +23,10 @@ public class OGL11Renderer implements RenderConsumer {
 		mgr.setGL(gl);
 		mgr.setVersion(1);
 
-        SystemManager sysMgr = SystemManager.sharedManager();
-        InputStream is = sysMgr.getContext().getResources().openRawResource(R.drawable.mg);
-		Bitmap bitmap = null;
-		try {
-			bitmap = BitmapFactory.decodeStream(is);
-
-		} finally {
-			try {
-				is.close();
-				is = null;
-			} catch (IOException e) {
-			}
-		}
-		
-		int height = bitmap.getHeight();
-		int width = bitmap.getWidth();
-		
 		RenderPrimative primative;
 		primative = new RenderPrimative();
-		primative.mTextureName = mgr.bitmapTexture(bitmap);
-		bitmap.recycle();
+		mgr.resourceTexture(R.drawable.mg, primative);
+		//primative.mTextureName = mgr.bitmapTexture(bitmap);
 		final float coordinates[] = {    		
 				// Mapping coordinates for the vertices
 				0.0f, 1.0f,		// top left		(V2)
@@ -62,6 +40,9 @@ public class OGL11Renderer implements RenderConsumer {
 		primative.mTextureBuffer.put(coordinates);
 		primative.mTextureBuffer.position(0);
 
+		int width = 64;
+		int height = 64;
+		
 		final float leftX = -(float)width / 2;
 		final float rightX = leftX + width;
 		final float bottomY = -(float)height / 2;
@@ -85,7 +66,7 @@ public class OGL11Renderer implements RenderConsumer {
 		primative.mB = 1.0f;
 		primative.mA = 1.0f;
 		
-		mBackBuffer.add(primative);
+		//mBackBuffer.add(primative);
 		gl.glClearColor(0.75f, 0.5f, 0.3f, 1.0f);
 		
 		mGraphicsCallback.done();
@@ -124,8 +105,10 @@ public class OGL11Renderer implements RenderConsumer {
 	
 	public void copyToBuffer() {
 		synchronized(mBackBuffer) {
-			//mBackBuffer.reset();
-			//mRenderProvider.copyToBuffer(mBackBuffer);
+			if (true) {
+				mBackBuffer.reset();
+				mRenderProvider.copyToBuffer(mBackBuffer);
+			}
 			mPrimBuffer.reset();
 			int size = mBackBuffer.size();
 			for (int i = 0;i < size;++i) {

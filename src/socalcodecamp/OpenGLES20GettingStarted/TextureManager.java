@@ -63,6 +63,7 @@ public class TextureManager {
 					list.add(primative);
 				} else {
 					LinkedList<RenderPrimative> list = new LinkedList<RenderPrimative>();
+					list.add(primative);
 					mTexturePrimatives.put(resourceId, list);
 				}
 			}
@@ -79,7 +80,7 @@ public class TextureManager {
 			if (!mTexturePrimatives.isEmpty()) {
 				Set<Integer> keyset = mTexturePrimatives.keySet();
 				for (Integer key : keyset) {
-			        InputStream is = sysMgr.getContext().getResources().openRawResource(R.drawable.mg);
+			        InputStream is = sysMgr.getContext().getResources().openRawResource(key);
 					Bitmap bitmap = null;
 					try {
 						bitmap = BitmapFactory.decodeStream(is);
