@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.util.Log;
+
 public class OGL11Renderer implements RenderConsumer {
 
 	private enum PrimativeType {
@@ -18,18 +20,17 @@ public class OGL11Renderer implements RenderConsumer {
 	private RenderProvider mRenderProvider;
 	
 	public void onSurfaceCreated(GL10 gl, EGLConfig arg1) {
+		TextureManager mgr = TextureManager.sharedManager();
+		mgr.setGL(gl);
+		mgr.setVersion(1);
+		mRenderProvider.renderInitialized();
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);			
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		
-		TextureManager mgr = TextureManager.sharedManager();
-		mgr.setGL(gl);
-		mgr.setVersion(1);
-
 		gl.glClearColor(0.75f, 0.5f, 0.3f, 1.0f);
 		
-		mRenderProvider.renderInitialized();
 		mPrimBuffer.put(PrimativeType.PolyPrimative, new PrimativeBuffer());
 		mPrimBuffer.put(PrimativeType.TexPrimative, new PrimativeBuffer());
 	}
@@ -52,6 +53,9 @@ public class OGL11Renderer implements RenderConsumer {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 		textureRender(gl, mPrimBuffer.get(PrimativeType.TexPrimative));
+		polygonRender(gl, mPrimBuffer.get(PrimativeType.PolyPrimative));
+    	Log.v("OGLRenderer:onDrawFrame", "Here");
+
 	}
 	
 	public void textureRender(GL10 gl, PrimativeBuffer buffer) {
@@ -69,6 +73,21 @@ public class OGL11Renderer implements RenderConsumer {
 			gl.glPopMatrix();
 		}
 		gl.glDisable(GL10.GL_TEXTURE_2D);
+	}
+	
+	public void polygonRender(GL10 gl, PrimativeBuffer buffer) {
+		final int size = buffer.size();
+		for (int i = 0;i < size;++i) {
+			RenderPrimative primative = buffer.get(i);
+			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, primative.mVertexBuffer);
+			gl.glColor4f(primative.mR, primative.mG, primative.mB, primative.mA);
+			
+			gl.glPushMatrix();
+			gl.glTranslatef(primative.mX, primative.mY, 0.0f);
+			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+			gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			gl.glPopMatrix();
+		}
 	}
 	
 	public void copyToBuffer() {

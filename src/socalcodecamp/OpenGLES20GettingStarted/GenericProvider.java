@@ -4,15 +4,19 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import android.util.Log;
+
 public class GenericProvider implements Runnable, RenderProvider {
-	private RenderPrimative mPrimative;
+	private RenderPrimative mTexPrimative;
+	private RenderPrimative mPolyPrimative;
 	private PrimativeBuffer mPrimatives = new PrimativeBuffer();
 	private PrimativeBuffer mCopyBuffer = new PrimativeBuffer();
 
     public void init() {
-		mPrimative = new RenderPrimative();
+    	Log.v("GenericProvider:init", "Here");
+		mTexPrimative = new RenderPrimative();
 		TextureManager texMgr = TextureManager.sharedManager();
-		mPrimative.mTextureName = texMgr.resourceTexture(R.drawable.mg, mPrimative);
+		mTexPrimative.mTextureName = texMgr.resourceTexture(R.drawable.mg, mTexPrimative);
 		
 		final float coordinates[] = {    		
 				// Mapping coordinates for the vertices
@@ -23,9 +27,9 @@ public class GenericProvider implements Runnable, RenderProvider {
 		};
 		ByteBuffer byteBuf = ByteBuffer.allocateDirect(coordinates.length * 4);
 		byteBuf.order(ByteOrder.nativeOrder());
-		mPrimative.mTextureBuffer = byteBuf.asFloatBuffer();
-		mPrimative.mTextureBuffer.put(coordinates);
-		mPrimative.mTextureBuffer.position(0);
+		mTexPrimative.mTextureBuffer = byteBuf.asFloatBuffer();
+		mTexPrimative.mTextureBuffer.put(coordinates);
+		mTexPrimative.mTextureBuffer.position(0);
 
 		final int width = 240;
 		final int height = 240;
@@ -46,15 +50,20 @@ public class GenericProvider implements Runnable, RenderProvider {
 		FloatBuffer vertexBuffer = byteBuf.asFloatBuffer();
 		vertexBuffer.put(vertices);
 		vertexBuffer.position(0);
-		mPrimative.mVertexBuffer = vertexBuffer;
+		mTexPrimative.mVertexBuffer = vertexBuffer;
 		
-		mPrimative.mR = 1.0f;
-		mPrimative.mG = 0.0f;
-		mPrimative.mB = 1.0f;
-		mPrimative.mA = 1.0f;
+		mTexPrimative.mX = -120.0f;
+		mTexPrimative.mY = 0.0f;
 		
-		mPrimative.mX = -120.0f;
-		mPrimative.mY = 0.0f;
+		mPolyPrimative = new RenderPrimative();
+		mPolyPrimative.mVertexBuffer = vertexBuffer;
+		mPolyPrimative.mR = 1.0f;
+		mPolyPrimative.mG = 0.0f;
+		mPolyPrimative.mB = 0.0f;
+		mPolyPrimative.mA = 1.0f;
+		mPolyPrimative.mX = 120.0f;
+		mPolyPrimative.mY = 0.0f;
+		
     }
     
 	public void run() {
@@ -72,7 +81,9 @@ public class GenericProvider implements Runnable, RenderProvider {
 	}
 	
 	public void frame() {
-		mPrimatives.add(mPrimative);
+		mPrimatives.add(mTexPrimative);
+		mPrimatives.add(mPolyPrimative);
+    	Log.v("GenericProvider:frame", "Here");
 	}
 	
 	public void copyToBuffer(PrimativeBuffer buffer) {
