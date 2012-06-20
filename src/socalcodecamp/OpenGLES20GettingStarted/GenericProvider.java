@@ -16,11 +16,10 @@ public class GenericProvider implements Runnable, RenderProvider {
 		mTexPrimative.mTextureName = texMgr.resourceTexture(R.drawable.mg, mTexPrimative);
 		
 		final float coordinates[] = {    		
-				// Mapping coordinates for the vertices
-				0.0f, 1.0f,		// top left		(V2)
-				0.0f, 0.0f,		// bottom left	(V1)
-				1.0f, 1.0f,		// top right	(V4)
-				1.0f, 0.0f		// bottom right	(V3)
+			0.0f, 1.0f,
+			0.0f, 0.0f,
+			1.0f, 1.0f,
+			1.0f, 0.0f
 		};
 		ByteBuffer byteBuf = ByteBuffer.allocateDirect(coordinates.length * 4);
 		byteBuf.order(ByteOrder.nativeOrder());
@@ -71,9 +70,14 @@ public class GenericProvider implements Runnable, RenderProvider {
 			synchronized(mCopyBuffer) {
 				mCopyBuffer.reset();
 				final int size = mPrimatives.size();
+				
+				System.arraycopy(mPrimatives.mRenderPrimatives, 0, mCopyBuffer.mRenderPrimatives, 0, size);
+				mCopyBuffer.setSize(size);
+				/*
 				for (int i = 0;i < size;++i) {
 					mCopyBuffer.add(mPrimatives.get(i).copy());
 				}
+				*/
 			}
 		}
 	}
@@ -86,11 +90,14 @@ public class GenericProvider implements Runnable, RenderProvider {
 	public void copyToBuffer(PrimativeBuffer buffer) {
 		synchronized(mCopyBuffer) {
 			final int size = mCopyBuffer.size();
+			System.arraycopy(mCopyBuffer.mRenderPrimatives, 0, buffer.mRenderPrimatives, 0, size);
+			buffer.setSize(size);
+			/*
 			for (int i = 0;i < size;++i) {
 				buffer.add(mCopyBuffer.get(i).copy());
 			}
+			*/
 		}
-		// TODO Auto-generated method stub
 	}
 	
 	public void renderInitialized() {

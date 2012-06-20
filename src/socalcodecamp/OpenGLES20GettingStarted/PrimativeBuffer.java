@@ -4,7 +4,7 @@ package socalcodecamp.OpenGLES20GettingStarted;
 public class PrimativeBuffer {
 	private final int MAX_SIZE = 1000;
 	
-	private RenderPrimative mRenderPrimatives[] = new RenderPrimative[MAX_SIZE];
+	public RenderPrimative mRenderPrimatives[] = new RenderPrimative[MAX_SIZE];
 	private int mTop = 0;
 
 	public void add(RenderPrimative primative) {
@@ -31,4 +31,7 @@ public class PrimativeBuffer {
 		mTop = 0;
 	}
 
+	public void setSize(int size) {
+		mTop = size;
+	}
 }
