@@ -69,7 +69,7 @@ public class GenericProvider implements Runnable, RenderProvider {
 			frame();
 			synchronized(mCopyBuffer) {
 				mCopyBuffer.reset();
-				final int size = mPrimatives.size();
+				final int size = mPrimatives.mTop;
 				
 				System.arraycopy(mPrimatives.mRenderPrimatives, 0, mCopyBuffer.mRenderPrimatives, 0, size);
 				mCopyBuffer.setSize(size);
@@ -89,7 +89,7 @@ public class GenericProvider implements Runnable, RenderProvider {
 	
 	public void copyToBuffer(PrimativeBuffer buffer) {
 		synchronized(mCopyBuffer) {
-			final int size = mCopyBuffer.size();
+			final int size = mCopyBuffer.mTop;
 			System.arraycopy(mCopyBuffer.mRenderPrimatives, 0, buffer.mRenderPrimatives, 0, size);
 			buffer.setSize(size);
 			/*

@@ -5,7 +5,7 @@ public class PrimativeBuffer {
 	private final int MAX_SIZE = 1000;
 	
 	public RenderPrimative mRenderPrimatives[] = new RenderPrimative[MAX_SIZE];
-	private int mTop = 0;
+	public int mTop = 0;
 
 	public void add(RenderPrimative primative) {
 		if (mTop < MAX_SIZE) {
@@ -21,10 +21,6 @@ public class PrimativeBuffer {
 		else
 			primative = null;
 		return primative;
-	}
-	
-	public int size() {
-		return mTop;
 	}
 	
 	public void reset() {

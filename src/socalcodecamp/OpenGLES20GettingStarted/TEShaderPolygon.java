@@ -15,7 +15,7 @@ public class TEShaderPolygon extends TEShaderProgram {
 	    
 	    RenderPrimative p;
 	    
-	    int primativeCount = primatives.size();
+	    int primativeCount = primatives.mTop;
 	    for (int i = 0;i < primativeCount;++i) {
 	        p = primatives.get(i);
 	        

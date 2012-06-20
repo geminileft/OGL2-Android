@@ -88,7 +88,7 @@ public class TERenderTarget {
 	}
 
 	public void addPrimatives(PrimativeBuffer buffer) {
-		final int size = buffer.size();
+		final int size = buffer.mTop;
 
 		for (int i = 0;i < size;++i) {
 			RenderPrimative primative = buffer.get(i).copy();

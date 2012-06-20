@@ -15,7 +15,7 @@ public class TEShaderTexture extends TEShaderProgram {
 
 	public void run(TERenderTarget target, PrimativeBuffer primatives) {
 	    
-	    int primativeCount = primatives.size();
+	    int primativeCount = primatives.mTop;
 	    for (int i = 0;i < primativeCount;++i) {
 	    	RenderPrimative primative = primatives.get(i);
 	        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, primative.mTextureName);

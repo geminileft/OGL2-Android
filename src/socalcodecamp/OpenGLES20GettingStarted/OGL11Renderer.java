@@ -60,7 +60,7 @@ public class OGL11Renderer implements RenderConsumer {
 	
 	public void textureRender(GL10 gl, PrimativeBuffer buffer) {
 		gl.glEnable(GL10.GL_TEXTURE_2D);
-		final int size = buffer.size();
+		final int size = buffer.mTop;
 		for (int i = 0;i < size;++i) {
 			RenderPrimative primative = buffer.get(i);
 			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, primative.mVertexBuffer);
@@ -76,7 +76,7 @@ public class OGL11Renderer implements RenderConsumer {
 	}
 	
 	public void polygonRender(GL10 gl, PrimativeBuffer buffer) {
-		final int size = buffer.size();
+		final int size = buffer.mTop;
 		for (int i = 0;i < size;++i) {
 			RenderPrimative primative = buffer.get(i);
 			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, primative.mVertexBuffer);
@@ -100,7 +100,7 @@ public class OGL11Renderer implements RenderConsumer {
 					mPrimBuffer.get(key).reset();
 				}
 				
-				int size = mBackBuffer.size();
+				int size = mBackBuffer.mTop;
 				for (int i = 0;i < size;++i) {
 					RenderPrimative primative = mBackBuffer.get(i).copy();
 					PrimativeType ptype;
