@@ -22,12 +22,4 @@ public class PrimativeBuffer {
 			primative = null;
 		return primative;
 	}
-	
-	public void reset() {
-		mTop = 0;
-	}
-
-	public void setSize(int size) {
-		mTop = size;
-	}
 }

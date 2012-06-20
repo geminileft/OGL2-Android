@@ -77,7 +77,7 @@ public class TERenderTarget {
 	    mShaders.clear();
 	    mTopBuffer = 0;
 	    for (int i = 0;i < MAX_BUFFER;++i) {
-	    	mBuffers[i].reset();
+	    	mBuffers[i].mTop = 0;
 	    }
 	}
 

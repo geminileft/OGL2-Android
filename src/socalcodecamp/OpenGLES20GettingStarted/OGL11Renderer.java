@@ -92,12 +92,12 @@ public class OGL11Renderer implements RenderConsumer {
 	
 	public void copyToBuffer() {
 		synchronized(mBackBuffer) {
-			mBackBuffer.reset();
+			mBackBuffer.mTop = 0;
 			mRenderProvider.copyToBuffer(mBackBuffer);
 			synchronized(mPrimBuffer) {
 				Set<PrimativeType> keys = mPrimBuffer.keySet();
 				for (PrimativeType key : keys) {
-					mPrimBuffer.get(key).reset();
+					mPrimBuffer.get(key).mTop = 0;
 				}
 				
 				int size = mBackBuffer.mTop;

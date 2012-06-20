@@ -66,7 +66,7 @@ public class OGL2Renderer implements RenderConsumer {
 
 	public void copyToBuffer() {
 		synchronized(mBackBuffer) {
-			mBackBuffer.reset();
+			mBackBuffer.mTop = 0;
 			mRenderProvider.copyToBuffer(mBackBuffer);
 			synchronized(mScreenTarget) {
 				mScreenTarget.resetPrimatives();
