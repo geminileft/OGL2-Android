@@ -50,8 +50,8 @@ public class OGL11Renderer implements RenderConsumer {
 		TextureManager texMgr = TextureManager.sharedManager();
 		texMgr.loadTextures();
 		copyToBuffer();
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		textureRender(gl, mPrimBuffer.get(PrimativeType.TexPrimative));
 		polygonRender(gl, mPrimBuffer.get(PrimativeType.PolyPrimative));
     	Log.v("OGLRenderer:onDrawFrame", "Here");

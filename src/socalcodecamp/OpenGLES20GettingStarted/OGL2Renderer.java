@@ -16,6 +16,7 @@ public class OGL2Renderer implements RenderConsumer {
     private int mScreenFrameBuffer;
     private TERenderTarget mScreenTarget;
 	private PrimativeBuffer mBackBuffer = new PrimativeBuffer();
+	private int mCurrentTarget = -1;
 
 	public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         GLES20.glEnable(GL10.GL_BLEND);
@@ -71,23 +72,20 @@ public class OGL2Renderer implements RenderConsumer {
 			synchronized(mScreenTarget) {
 				mScreenTarget.resetPrimatives();
 				mScreenTarget.addPrimatives(mBackBuffer);
-				/*
-				int size = mBackBuffer.size();
-				for (int i = 0;i < size;++i) {
-					RenderPrimative primative = mBackBuffer.get(i).copy();
-					mScreenTarget.addPrimative(primative);
-				}
-				*/
 			}
 		}
 	}
 
     public void runTargetShaders(TERenderTarget target) {
-
     	HashMap<TEShaderType, PrimativeBuffer> shaderData;
         TEShaderProgram rp;
 
-        target.activate();
+        final int frameBuffer = target.getFrameBuffer();
+        if (mCurrentTarget != frameBuffer) {
+            target.activate();
+            mCurrentTarget = frameBuffer;
+        }
+        
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         shaderData = target.getShaderData();
         Set<TEShaderType> keySet;
