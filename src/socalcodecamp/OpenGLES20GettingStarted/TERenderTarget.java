@@ -16,8 +16,8 @@ public class TERenderTarget {
     private float mB;
     private float mA;
     
-    float mProjMatrix[] = new float[16];
-    float mViewMatrix[] = new float[16];
+    public float mProjMatrix[] = new float[16];
+    public float mViewMatrix[] = new float[16];
     public enum TEShaderType {
     	ShaderTexture
     	, ShaderPolygon
@@ -72,14 +72,6 @@ public class TERenderTarget {
 	    GLES20.glViewport(0, 0, mFrameWidth, mFrameHeight);
 	    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffer);
 	    GLES20.glClearColor(mR, mG, mB, mA);
-	}
-
-	public float[] getProjMatrix() {
-	    return mProjMatrix;
-	}
-
-	public float[] getViewMatrix() {
-	    return mViewMatrix;
 	}
 
 	public void addPrimative(RenderPrimative primative) {

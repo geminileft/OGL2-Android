@@ -4,8 +4,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import android.util.Log;
-
 public class GenericProvider implements Runnable, RenderProvider {
 	private RenderPrimative mTexPrimative;
 	private RenderPrimative mPolyPrimative;
@@ -13,7 +11,6 @@ public class GenericProvider implements Runnable, RenderProvider {
 	private PrimativeBuffer mCopyBuffer = new PrimativeBuffer();
 
     public void init() {
-    	Log.v("GenericProvider:init", "Here");
 		mTexPrimative = new RenderPrimative();
 		TextureManager texMgr = TextureManager.sharedManager();
 		mTexPrimative.mTextureName = texMgr.resourceTexture(R.drawable.mg, mTexPrimative);
@@ -70,10 +67,11 @@ public class GenericProvider implements Runnable, RenderProvider {
 		init();
 		while (true) {
 			mPrimatives.reset();
-			frame();				
+			frame();
 			synchronized(mCopyBuffer) {
 				mCopyBuffer.reset();
-				for (int i = 0;i < mPrimatives.size();++i) {
+				final int size = mPrimatives.size();
+				for (int i = 0;i < size;++i) {
 					mCopyBuffer.add(mPrimatives.get(i).copy());
 				}
 			}
@@ -83,12 +81,12 @@ public class GenericProvider implements Runnable, RenderProvider {
 	public void frame() {
 		mPrimatives.add(mTexPrimative);
 		mPrimatives.add(mPolyPrimative);
-    	Log.v("GenericProvider:frame", "Here");
 	}
 	
 	public void copyToBuffer(PrimativeBuffer buffer) {
 		synchronized(mCopyBuffer) {
-			for (int i = 0;i < mCopyBuffer.size();++i) {
+			final int size = mCopyBuffer.size();
+			for (int i = 0;i < size;++i) {
 				buffer.add(mCopyBuffer.get(i).copy());
 			}
 		}

@@ -9,8 +9,12 @@ public abstract class TEShaderProgram {
 	private String mVertexSource;
 	private String mFragmentSource;
 	public int mProgramId;
-	private LinkedList<String> mAttributes = new LinkedList<String>();
-	
+	private ShaderAttributeArray mAttributes = new ShaderAttributeArray();
+	private int mAttribSize = 0;
+	private int mProjHandle;
+    private int mViewHandle;
+    private int mAttribsInternal[];
+
 	TEShaderProgram(String vertexSource, String fragmentSource) {
 		setVertexSource(vertexSource);
 		setFragmentSource(fragmentSource);
@@ -24,7 +28,7 @@ public abstract class TEShaderProgram {
 		mFragmentSource = source;
 	}
 
-    public final void create() {
+    public void create() {
         mProgramId = GLES20.glCreateProgram();
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, mVertexSource);
         GLES20.glAttachShader(mProgramId, vertexShader);
@@ -39,32 +43,33 @@ public abstract class TEShaderProgram {
             GLES20.glDeleteProgram(mProgramId);
             mProgramId = 0;
         }
+        mProjHandle  = GLES20.glGetUniformLocation(mProgramId, "uProjectionMatrix");
+        mViewHandle = GLES20.glGetUniformLocation(mProgramId, "uViewMatrix");
+        final int count = mAttributes.size();
+        mAttribsInternal = new int[count];
+        for (int i = 0;i < count;++i) {
+        	int attrib = GLES20.glGetAttribLocation(mProgramId, mAttributes.get(i));
+        	mAttribsInternal[i] = attrib;
+        }
+        
     }
 
     public final void activate(TERenderTarget target) {
         
         GLES20.glUseProgram(mProgramId);
         
-        int count = mAttributes.size();
-        String attribute = "";
-        if (count > 0) {
-        	int i = 0;
-        	while (i < count) {
-	        	attribute = mAttributes.get(i);
-	            int handle = GLES20.glGetAttribLocation(mProgramId, attribute);
-	            GLES20.glEnableVertexAttribArray(handle);
-	        	++i;
-        	}
+        final int size = mAttribsInternal.length;
+        for (int i = 0;i < size;++i) {
+            GLES20.glEnableVertexAttribArray(mAttribsInternal[i]);       	
         }
         
         //target.activate();
-        int mProjHandle  = GLES20.glGetUniformLocation(mProgramId, "uProjectionMatrix");
-        int mViewHandle = GLES20.glGetUniformLocation(mProgramId, "uViewMatrix");
-        GLES20.glUniformMatrix4fv(mProjHandle, 1, false, target.getProjMatrix(), 0);
-        GLES20.glUniformMatrix4fv(mViewHandle, 1, false, target.getViewMatrix(), 0);
+        GLES20.glUniformMatrix4fv(mProjHandle, 1, false, target.mProjMatrix, 0);
+        GLES20.glUniformMatrix4fv(mViewHandle, 1, false, target.mViewMatrix, 0);
     }
     
     public final void addAttribute(String attribute) {
+    	mAttribSize++;
     	mAttributes.add(attribute);
     }
     
@@ -89,13 +94,9 @@ public abstract class TEShaderProgram {
     }
 
 	public final void deactivate() {
-		int size = mAttributes.size();
-	    if (size > 0) {
-	        for (int i = 0;i < size;++i) {
-	            int handle = GLES20.glGetAttribLocation(mProgramId, mAttributes.get(i));
-	            GLES20.glDisableVertexAttribArray(handle);
-	            checkGlError("glDisableVertexAttribArray");
-	        }
-	    }
+        final int size = mAttribsInternal.length;
+        for (int i = 0;i < size;++i) {
+            GLES20.glDisableVertexAttribArray(mAttribsInternal[i]);       	
+        }
 	}
 }
