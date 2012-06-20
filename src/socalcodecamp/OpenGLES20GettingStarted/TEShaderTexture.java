@@ -16,7 +16,6 @@ public class TEShaderTexture extends TEShaderProgram {
 	}
 
 	public void run(TERenderTarget target, LinkedList<RenderPrimative> primatives) {
-	    activate(target);
 	    
 	    int primativeCount = primatives.size();
 	    for (int i = 0;i < primativeCount;++i) {

@@ -14,7 +14,6 @@ public class TEShaderPolygon extends TEShaderProgram {
 	}
 
 	public void run(TERenderTarget target, LinkedList<RenderPrimative> primatives) {
-	    activate(target);
 	    
 	    RenderPrimative p;
 	    
