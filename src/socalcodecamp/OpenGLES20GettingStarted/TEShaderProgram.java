@@ -1,5 +1,7 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
+import java.util.LinkedList;
+
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -7,11 +9,11 @@ public abstract class TEShaderProgram {
 	private String mVertexSource;
 	private String mFragmentSource;
 	public int mProgramId;
-	private ShaderAttributeArray mAttributes = new ShaderAttributeArray();
 	private int mAttribSize = 0;
 	private int mProjHandle;
     private int mViewHandle;
     private int mAttribsInternal[];
+    private LinkedList<String> mAttributes = new LinkedList<String>();
 
 	TEShaderProgram(String vertexSource, String fragmentSource) {
 		setVertexSource(vertexSource);
