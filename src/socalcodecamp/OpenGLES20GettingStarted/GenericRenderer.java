@@ -5,7 +5,7 @@ import android.opengl.GLSurfaceView;
 
 
 public class GenericRenderer {
-	private final int RENDER_VERSION = 2;
+	private final int RENDER_VERSION = 1;
 	
 	private RenderConsumer mRenderer;
 	
