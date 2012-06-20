@@ -74,6 +74,30 @@ public class TERenderTarget {
 	    GLES20.glClearColor(mR, mG, mB, mA);
 	}
 
+	public void addPrimatives(PrimativeBuffer buffer) {
+		final int size = buffer.size();
+
+		for (int i = 0;i < size;++i) {
+			RenderPrimative primative = buffer.get(i).copy();
+			TEShaderType type;
+		    LinkedList<RenderPrimative> primatives;
+		    
+		    if (primative.mTextureBuffer == null) {
+		        type = TEShaderType.ShaderPolygon;
+		    } else {
+	            type = TEShaderType.ShaderTexture;
+		    }
+		    
+		    if (mShaders.containsKey(type))
+		        primatives = mShaders.get(type);
+		    else {
+		    	primatives = new LinkedList<RenderPrimative>();
+		    	mShaders.put(type, primatives);
+		    }
+		    primatives.add(primative);
+		}
+
+	}
 	public void addPrimative(RenderPrimative primative) {
 	    
 		TEShaderType type;

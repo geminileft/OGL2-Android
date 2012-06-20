@@ -71,11 +71,14 @@ public class OGL2Renderer implements RenderConsumer {
 			mRenderProvider.copyToBuffer(mBackBuffer);
 			synchronized(mScreenTarget) {
 				mScreenTarget.resetPrimatives();
+				mScreenTarget.addPrimatives(mBackBuffer);
+				/*
 				int size = mBackBuffer.size();
 				for (int i = 0;i < size;++i) {
 					RenderPrimative primative = mBackBuffer.get(i).copy();
 					mScreenTarget.addPrimative(primative);
 				}
+				*/
 			}
 		}
 	}
