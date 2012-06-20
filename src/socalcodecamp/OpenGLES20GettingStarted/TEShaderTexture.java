@@ -1,7 +1,5 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
-import java.util.LinkedList;
-
 import android.opengl.GLES20;
 
 public class TEShaderTexture extends TEShaderProgram {
@@ -15,7 +13,7 @@ public class TEShaderTexture extends TEShaderProgram {
 		super(vertexSource, fragmentSource);
 	}
 
-	public void run(TERenderTarget target, LinkedList<RenderPrimative> primatives) {
+	public void run(TERenderTarget target, PrimativeBuffer primatives) {
 	    
 	    int primativeCount = primatives.size();
 	    for (int i = 0;i < primativeCount;++i) {

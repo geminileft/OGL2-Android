@@ -1,6 +1,5 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Set;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -85,7 +84,7 @@ public class OGL2Renderer implements RenderConsumer {
 
     public void runTargetShaders(TERenderTarget target) {
 
-    	HashMap<TEShaderType, LinkedList<RenderPrimative>> shaderData;
+    	HashMap<TEShaderType, PrimativeBuffer> shaderData;
         TEShaderProgram rp;
 
         target.activate();
@@ -98,7 +97,7 @@ public class OGL2Renderer implements RenderConsumer {
 				rp = mShaderPrograms.get(type);
 				if (rp != null) {
 					    rp.activate(target);
-					    LinkedList<RenderPrimative> primatives = shaderData.get(type);
+					    PrimativeBuffer primatives = shaderData.get(type);
 					    rp.run(target, primatives);
 				} else {
 					Log.v("No Shader", "hrm");

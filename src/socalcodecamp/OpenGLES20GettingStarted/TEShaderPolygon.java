@@ -1,7 +1,5 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
-import java.util.LinkedList;
-
 import android.opengl.GLES20;
 
 public class TEShaderPolygon extends TEShaderProgram {
@@ -13,7 +11,7 @@ public class TEShaderPolygon extends TEShaderProgram {
 		super(vertexSource, fragmentSource);
 	}
 
-	public void run(TERenderTarget target, LinkedList<RenderPrimative> primatives) {
+	public void run(TERenderTarget target, PrimativeBuffer primatives) {
 	    
 	    RenderPrimative p;
 	    

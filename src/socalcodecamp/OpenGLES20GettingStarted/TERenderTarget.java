@@ -1,7 +1,6 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
@@ -26,8 +25,8 @@ public class TERenderTarget {
     	, ShaderGrayscale
     };
     
-	HashMap<TEShaderType, LinkedList<RenderPrimative>> mShaders = new HashMap<TEShaderType, LinkedList<RenderPrimative>>();
-	HashMap<TEShaderType, LinkedList<RenderPrimative>> mShaderBuffer = new HashMap<TEShaderType, LinkedList<RenderPrimative>>();
+	HashMap<TEShaderType, PrimativeBuffer> mShaders = new HashMap<TEShaderType, PrimativeBuffer>();
+	HashMap<TEShaderType, PrimativeBuffer> mShaderBuffer = new HashMap<TEShaderType, PrimativeBuffer>();
 
 	public TERenderTarget(int frameBuffer, float r, float g, float b, float a) {
 		mR = r;
@@ -80,7 +79,7 @@ public class TERenderTarget {
 		for (int i = 0;i < size;++i) {
 			RenderPrimative primative = buffer.get(i).copy();
 			TEShaderType type;
-		    LinkedList<RenderPrimative> primatives;
+		    PrimativeBuffer primatives;
 		    
 		    if (primative.mTextureBuffer == null) {
 		        type = TEShaderType.ShaderPolygon;
@@ -91,7 +90,7 @@ public class TERenderTarget {
 		    if (mShaders.containsKey(type))
 		        primatives = mShaders.get(type);
 		    else {
-		    	primatives = new LinkedList<RenderPrimative>();
+		    	primatives = new PrimativeBuffer();
 		    	mShaders.put(type, primatives);
 		    }
 		    primatives.add(primative);
@@ -101,7 +100,7 @@ public class TERenderTarget {
 	public void addPrimative(RenderPrimative primative) {
 	    
 		TEShaderType type;
-	    LinkedList<RenderPrimative> primatives;
+	    PrimativeBuffer primatives;
 	    
 	    if (primative.mTextureBuffer == null) {
 	        type = TEShaderType.ShaderPolygon;
@@ -112,27 +111,13 @@ public class TERenderTarget {
 	    if (mShaders.containsKey(type))
 	        primatives = mShaders.get(type);
 	    else {
-	    	primatives = new LinkedList<RenderPrimative>();
+	    	primatives = new PrimativeBuffer();
 	    	mShaders.put(type, primatives);
 	    }
 	    primatives.add(primative);
 	}
 
-	public HashMap<TEShaderType, LinkedList<RenderPrimative>> getShaderData() {
-		/*
-		Log.v("getShaderData", "trying to locate error");
-		synchronized(mShaderBuffer) {
-			mShaderBuffer.clear();
-			for (TEShaderType key : mShaders.keySet()) {
-				LinkedList<TERenderPrimative> list = new LinkedList<TERenderPrimative>();
-				for (TERenderPrimative primative : mShaders.get(key)) {
-					list.add(primative);
-				}
-				mShaderBuffer.put(key, list);
-			}
-		}
-		mShaders.clear();
-		*/
+	public HashMap<TEShaderType, PrimativeBuffer> getShaderData() {
 	    return mShaders;
 	}
 }

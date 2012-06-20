@@ -1,7 +1,5 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
-import java.util.LinkedList;
-
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -73,7 +71,7 @@ public abstract class TEShaderProgram {
     	mAttributes.add(attribute);
     }
     
-    public abstract void run(TERenderTarget target, LinkedList<RenderPrimative> primatives);
+    public abstract void run(TERenderTarget target, PrimativeBuffer primatives);
     
     private int loadShader(int shaderType, String source) {
         int shader = GLES20.glCreateShader(shaderType);
