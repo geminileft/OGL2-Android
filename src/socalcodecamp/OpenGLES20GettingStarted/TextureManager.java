@@ -17,7 +17,6 @@ import android.util.Log;
 public class TextureManager {
 	private static TextureManager mSharedManager;
 	private GL10 mGL;
-	private int mVersion;
 	private HashMap<Integer, LinkedList<RenderPrimative>> mTexturePrimatives = new HashMap<Integer, LinkedList<RenderPrimative>>();
 	private HashMap<Integer, Integer> mTextures = new HashMap<Integer, Integer>();
 	
@@ -30,7 +29,7 @@ public class TextureManager {
 	
 	public int bitmapTexture(Bitmap bitmap) {
 		int mTextures[] = new int[1];
-		if (mVersion == 1) {
+		if (GenericRenderer.RENDER_VERSION == 1) {
 			mGL.glGenTextures(1, mTextures, 0);
 			mGL.glBindTexture(GL10.GL_TEXTURE_2D, mTextures[0]);
 			
@@ -42,7 +41,7 @@ public class TextureManager {
 	
 	        mGL.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE); //GL10.GL_REPLACE);
 	        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);		
-		} else if (mVersion == 2) {
+		} else if (GenericRenderer.RENDER_VERSION == 2) {
 			GLES20.glGenTextures(1, mTextures, 0);
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextures[0]);
 			
@@ -61,10 +60,6 @@ public class TextureManager {
 	
 	public void setGL(GL10 gl) {
 		mGL = gl;
-	}
-	
-	public void setVersion(int version) {
-		mVersion = version;
 	}
 	
 	public int resourceTexture(int resourceId, RenderPrimative primative) {

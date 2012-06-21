@@ -5,10 +5,7 @@ import java.util.HashMap;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-public class TERenderTarget {
-	private final int MAX_BUFFER = 5;
-	private int mTopBuffer = 0;
-	
+public class TERenderTarget {	
 	private int mFrameBuffer;
 	private int mFrameWidth;
     private int mFrameHeight;
@@ -23,12 +20,7 @@ public class TERenderTarget {
     public enum TEShaderType {
     	ShaderTexture
     	, ShaderPolygon
-    	, ShaderKernel
-    	, ShaderTransparentColor
-    	, ShaderGrayscale
     };
-    
-    private PrimativeBuffer mBuffers[];
     
 	HashMap<TEShaderType, PrimativeBuffer> mShaders = new HashMap<TEShaderType, PrimativeBuffer>();
 	HashMap<TEShaderType, PrimativeBuffer> mShaderBuffer = new HashMap<TEShaderType, PrimativeBuffer>();
@@ -38,12 +30,7 @@ public class TERenderTarget {
 		mG = g;
 		mB = b;
 		mA = a;
-		mFrameBuffer = frameBuffer;
-		
-		mBuffers = new PrimativeBuffer[MAX_BUFFER];
-		for (int i = 0;i < MAX_BUFFER;++i) {
-			mBuffers[i] = new PrimativeBuffer();
-		}
+		mFrameBuffer = frameBuffer;		
 	}
 
 	public void setSize(int width, int height) {
@@ -75,10 +62,6 @@ public class TERenderTarget {
 
 	public void resetPrimatives() {
 	    mShaders.clear();
-	    mTopBuffer = 0;
-	    for (int i = 0;i < MAX_BUFFER;++i) {
-	    	mBuffers[i].mTop = 0;
-	    }
 	}
 
 	public void activate() {
@@ -90,53 +73,29 @@ public class TERenderTarget {
 	public void addPrimatives(PrimativeBuffer buffer) {
 		final int size = buffer.mTop;
 
-		for (int i = 0;i < size;++i) {
+	    PrimativeBuffer polyPrimatives = new PrimativeBuffer();
+	    PrimativeBuffer texPrimatives = new PrimativeBuffer();
+
+	    for (int i = 0;i < size;++i) {
 			RenderPrimative primative = buffer.get(i).copy();
-			TEShaderType type;
-		    PrimativeBuffer primatives;
 		    
 		    if (primative.mTextureBuffer == null) {
-		        type = TEShaderType.ShaderPolygon;
+		    	polyPrimatives.add(primative);
 		    } else {
-	            type = TEShaderType.ShaderTexture;
+		    	texPrimatives.add(primative);
 		    }
-		    
-		    if (mShaders.containsKey(type))
-		        primatives = mShaders.get(type);
-		    else {
-		    	primatives = new PrimativeBuffer();
-		    	mShaders.put(type, primatives);
-		    }
-		    primatives.add(primative);
-		}
-	}
-	
-	public void addPrimative(RenderPrimative primative) {
-	    
-		TEShaderType type;
-	    PrimativeBuffer primatives;
-	    
-	    if (primative.mTextureBuffer == null) {
-	        type = TEShaderType.ShaderPolygon;
-	    } else {
-            type = TEShaderType.ShaderTexture;
-	    }
-	    
-	    if (mShaders.containsKey(type))
-	        primatives = mShaders.get(type);
-	    else {
-	    	primatives = new PrimativeBuffer();
-	    	//primatives = getNextBuffer();
-	    	mShaders.put(type, primatives);
-	    }
-	    primatives.add(primative);
-	}
 
+		}
+	    if (texPrimatives.mTop > 0) {
+	    	mShaders.put(TEShaderType.ShaderTexture, texPrimatives);
+	    }
+	    if (polyPrimatives.mTop > 0) {
+	    	mShaders.put(TEShaderType.ShaderPolygon, polyPrimatives);
+	    }		    
+	}
+		
 	public HashMap<TEShaderType, PrimativeBuffer> getShaderData() {
 	    return mShaders;
 	}
-	
-	public PrimativeBuffer getNextBuffer() {
-		return mBuffers[mTopBuffer++];
-	}
+
 }

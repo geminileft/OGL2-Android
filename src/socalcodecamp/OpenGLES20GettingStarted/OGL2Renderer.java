@@ -17,6 +17,7 @@ public class OGL2Renderer implements RenderConsumer {
     private TERenderTarget mScreenTarget;
 	private PrimativeBuffer mBackBuffer = new PrimativeBuffer();
 	private int mCurrentTarget = -1;
+	private TextureManager mTexMgr;
 
 	public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         GLES20.glEnable(GL10.GL_BLEND);
@@ -26,6 +27,7 @@ public class OGL2Renderer implements RenderConsumer {
 		TEShaderProgram program;
 		
 		SystemManager sysMgr = SystemManager.sharedManager();
+		mTexMgr = TextureManager.sharedManager();
 		
 		vertexSource = sysMgr.readFileContents("colorbox.vs");
 		fragmentSource = sysMgr.readFileContents("colorbox.fs");
@@ -47,8 +49,6 @@ public class OGL2Renderer implements RenderConsumer {
 		mScreenFrameBuffer = params[0];
 		mScreenTarget = new TERenderTarget(mScreenFrameBuffer, 0.75f, 0.5f, 0.3f, 1.0f);
 
-		TextureManager mgr = TextureManager.sharedManager();
-		mgr.setVersion(2);
 		mRenderProvider.renderInitialized();
 	}
 
@@ -57,8 +57,7 @@ public class OGL2Renderer implements RenderConsumer {
 	}
 
 	public void onDrawFrame(GL10 arg0) {
-		TextureManager texMgr = TextureManager.sharedManager();
-		texMgr.loadTextures();
+		mTexMgr.loadTextures();
 		copyToBuffer();
 		
         runTargetShaders(mScreenTarget);
