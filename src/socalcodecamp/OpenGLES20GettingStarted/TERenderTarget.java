@@ -5,7 +5,9 @@ import java.util.HashMap;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-public class TERenderTarget {	
+public class TERenderTarget {
+	private final int MAX_BUFFERS = 2;
+	
 	private int mFrameBuffer;
 	private int mFrameWidth;
     private int mFrameHeight;
@@ -22,15 +24,20 @@ public class TERenderTarget {
     	, ShaderPolygon
     };
     
+    private PrimativeBuffer mBuffers[] = new PrimativeBuffer[MAX_BUFFERS];
+    
 	HashMap<TEShaderType, PrimativeBuffer> mShaders = new HashMap<TEShaderType, PrimativeBuffer>();
-	HashMap<TEShaderType, PrimativeBuffer> mShaderBuffer = new HashMap<TEShaderType, PrimativeBuffer>();
 
 	public TERenderTarget(int frameBuffer, float r, float g, float b, float a) {
 		mR = r;
 		mG = g;
 		mB = b;
 		mA = a;
-		mFrameBuffer = frameBuffer;		
+		mFrameBuffer = frameBuffer;
+		for (int i = 0;i < MAX_BUFFERS;++i) {
+			mBuffers[i] = new PrimativeBuffer();
+		}
+
 	}
 
 	public void setSize(int width, int height) {
@@ -73,8 +80,11 @@ public class TERenderTarget {
 	public void addPrimatives(PrimativeBuffer buffer) {
 		final int size = buffer.mTop;
 
-	    PrimativeBuffer polyPrimatives = new PrimativeBuffer();
-	    PrimativeBuffer texPrimatives = new PrimativeBuffer();
+	    PrimativeBuffer polyPrimatives = mBuffers[0];
+	    PrimativeBuffer texPrimatives = mBuffers[1];
+	    
+	    polyPrimatives.mTop = 0;
+	    texPrimatives.mTop = 0;
 
 	    for (int i = 0;i < size;++i) {
 			RenderPrimative primative = buffer.get(i).copy();
@@ -97,5 +107,4 @@ public class TERenderTarget {
 	public HashMap<TEShaderType, PrimativeBuffer> getShaderData() {
 	    return mShaders;
 	}
-
 }

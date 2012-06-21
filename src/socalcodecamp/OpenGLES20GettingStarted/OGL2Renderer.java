@@ -1,5 +1,6 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -18,31 +19,33 @@ public class OGL2Renderer implements RenderConsumer {
 	private PrimativeBuffer mBackBuffer = new PrimativeBuffer();
 	private int mCurrentTarget = -1;
 	private TextureManager mTexMgr;
+	
+	private TEShaderTexture mTexProgram;
+	private TEShaderPolygon mPolyProgram;
 
 	public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         GLES20.glEnable(GL10.GL_BLEND);
 		GLES20.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
         String vertexSource;
         String fragmentSource;
-		TEShaderProgram program;
 		
 		SystemManager sysMgr = SystemManager.sharedManager();
 		mTexMgr = TextureManager.sharedManager();
 		
 		vertexSource = sysMgr.readFileContents("colorbox.vs");
 		fragmentSource = sysMgr.readFileContents("colorbox.fs");
-		program = new TEShaderPolygon(vertexSource, fragmentSource);
-	    program.addAttribute("aVertices");
-		program.create();
-		mShaderPrograms.put(TEShaderType.ShaderPolygon, program);
+		mPolyProgram = new TEShaderPolygon(vertexSource, fragmentSource);
+	    mPolyProgram.addAttribute("aVertices");
+		mPolyProgram.create();
+		mShaderPrograms.put(TEShaderType.ShaderPolygon, mPolyProgram);
 		
 		vertexSource = sysMgr.readFileContents("texture.vs");
 		fragmentSource = sysMgr.readFileContents("texture.fs");
-		program = new TEShaderTexture(vertexSource, fragmentSource);
-	    program.addAttribute("aVertices");
-	    program.addAttribute("aTextureCoords");
-		program.create();
-		mShaderPrograms.put(TEShaderType.ShaderTexture, program);
+		mTexProgram = new TEShaderTexture(vertexSource, fragmentSource);
+		mTexProgram.addAttribute("aVertices");
+		mTexProgram.addAttribute("aTextureCoords");
+		mTexProgram.create();
+		mShaderPrograms.put(TEShaderType.ShaderTexture, mTexProgram);
 
 		int[] params = new int[1];
 		GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, params, 0);
@@ -78,6 +81,7 @@ public class OGL2Renderer implements RenderConsumer {
     public void runTargetShaders(TERenderTarget target) {
     	HashMap<TEShaderType, PrimativeBuffer> shaderData;
         TEShaderProgram rp;
+        TEShaderType type;
 
         final int frameBuffer = target.getFrameBuffer();
         if (mCurrentTarget != frameBuffer) {
@@ -87,15 +91,17 @@ public class OGL2Renderer implements RenderConsumer {
         
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         shaderData = target.getShaderData();
-        Set<TEShaderType> keySet;
 		if (shaderData != null) {
-			keySet = shaderData.keySet();
-			for (TEShaderType type : keySet) {
-				rp = mShaderPrograms.get(type);
+			for (Entry<TEShaderType, PrimativeBuffer> entry : shaderData.entrySet()) {
+				rp = null;
+				type = entry.getKey();
+				if (type == TEShaderType.ShaderPolygon)
+					rp = mPolyProgram;
+				else if (type == TEShaderType.ShaderTexture)
+					rp = mTexProgram;
 				if (rp != null) {
 					    rp.activate(target);
-					    PrimativeBuffer primatives = shaderData.get(type);
-					    rp.run(target, primatives);
+					    rp.run(target, entry.getValue());
 				} else {
 					Log.v("No Shader", "hrm");
 				}
