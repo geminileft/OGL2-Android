@@ -1,7 +1,5 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
-import java.util.HashMap;
-
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
@@ -26,8 +24,8 @@ public class TERenderTarget {
     
     private PrimativeBuffer mBuffers[] = new PrimativeBuffer[MAX_BUFFERS];
     
-	HashMap<TEShaderType, PrimativeBuffer> mShaders = new HashMap<TEShaderType, PrimativeBuffer>();
-
+	ShaderData mShaderData = new ShaderData();
+	
 	public TERenderTarget(int frameBuffer, float r, float g, float b, float a) {
 		mR = r;
 		mG = g;
@@ -68,7 +66,10 @@ public class TERenderTarget {
 	}
 
 	public void resetPrimatives() {
-	    mShaders.clear();
+		mShaderData.reset();
+		for (int i = 0;i < MAX_BUFFERS;++i) {
+			mBuffers[i].mTop = 0;
+		}
 	}
 
 	public void activate() {
@@ -97,14 +98,14 @@ public class TERenderTarget {
 
 		}
 	    if (texPrimatives.mTop > 0) {
-	    	mShaders.put(TEShaderType.ShaderTexture, texPrimatives);
+	    	mShaderData.add(TEShaderType.ShaderTexture, texPrimatives);
 	    }
 	    if (polyPrimatives.mTop > 0) {
-	    	mShaders.put(TEShaderType.ShaderPolygon, polyPrimatives);
+	    	mShaderData.add(TEShaderType.ShaderPolygon, polyPrimatives);
 	    }		    
 	}
 		
-	public HashMap<TEShaderType, PrimativeBuffer> getShaderData() {
-	    return mShaders;
+	public ShaderData getShaderData() {
+		return mShaderData;
 	}
 }

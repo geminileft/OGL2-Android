@@ -1,7 +1,5 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -79,7 +77,7 @@ public class OGL2Renderer implements RenderConsumer {
 	}
 
     public void runTargetShaders(TERenderTarget target) {
-    	HashMap<TEShaderType, PrimativeBuffer> shaderData;
+    	ShaderData data;
         TEShaderProgram rp;
         TEShaderType type;
 
@@ -90,6 +88,26 @@ public class OGL2Renderer implements RenderConsumer {
         }
         
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        data = target.getShaderData();
+        final int size = data.size();
+		if (size > 0) {
+			for (int i = 0;i < size;++i) {
+				rp = null;
+				type = data.getType(i);
+				if (type == TEShaderType.ShaderPolygon)
+					rp = mPolyProgram;
+				else if (type == TEShaderType.ShaderTexture)
+					rp = mTexProgram;
+				if (rp != null) {
+					    rp.activate(target);
+					    rp.run(target, data.getBuffer(i));
+				} else {
+					Log.v("No Shader", "hrm");
+				}
+			}
+		}
+        
+        /*
         shaderData = target.getShaderData();
 		if (shaderData != null) {
 			for (Entry<TEShaderType, PrimativeBuffer> entry : shaderData.entrySet()) {
@@ -107,6 +125,7 @@ public class OGL2Renderer implements RenderConsumer {
 				}
 			}
 		}
+		*/
     }
 
 	public void setRenderProvider(RenderProvider provider) {
