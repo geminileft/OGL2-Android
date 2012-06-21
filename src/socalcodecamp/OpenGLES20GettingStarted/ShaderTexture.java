@@ -2,18 +2,18 @@ package socalcodecamp.OpenGLES20GettingStarted;
 
 import android.opengl.GLES20;
 
-public class TEShaderTexture extends TEShaderProgram {
+public class ShaderTexture extends ShaderProgram {
 
 	private int mPositionHandle;
 	private int mTextureHandle;
 	private int mCoordsHandle;
 	private int mAlphaHandle;
 	
-	public TEShaderTexture(String vertexSource, String fragmentSource) {
+	public ShaderTexture(String vertexSource, String fragmentSource) {
 		super(vertexSource, fragmentSource);
 	}
 
-	public void run(TERenderTarget target, PrimativeBuffer primatives) {
+	public void run(RenderTarget target, PrimativeBuffer primatives) {
 	    
 	    int primativeCount = primatives.mTop;
 	    for (int i = 0;i < primativeCount;++i) {

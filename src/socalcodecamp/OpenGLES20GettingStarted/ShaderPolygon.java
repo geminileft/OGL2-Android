@@ -2,16 +2,16 @@ package socalcodecamp.OpenGLES20GettingStarted;
 
 import android.opengl.GLES20;
 
-public class TEShaderPolygon extends TEShaderProgram {
+public class ShaderPolygon extends ShaderProgram {
 	private int mVertexHandle;
     private int mColorHandle;
     private int mPosHandle;
 
-	public TEShaderPolygon(String vertexSource, String fragmentSource) {
+	public ShaderPolygon(String vertexSource, String fragmentSource) {
 		super(vertexSource, fragmentSource);
 	}
 
-	public void run(TERenderTarget target, PrimativeBuffer primatives) {
+	public void run(RenderTarget target, PrimativeBuffer primatives) {
 	    
 	    RenderPrimative p;
 	    

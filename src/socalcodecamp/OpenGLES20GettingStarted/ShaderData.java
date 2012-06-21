@@ -1,6 +1,6 @@
 package socalcodecamp.OpenGLES20GettingStarted;
 
-import socalcodecamp.OpenGLES20GettingStarted.TERenderTarget.TEShaderType;
+import socalcodecamp.OpenGLES20GettingStarted.RenderTarget.TEShaderType;
 
 public class ShaderData {
 	private int MAX_DATA = 2;

@@ -3,7 +3,7 @@ package socalcodecamp.OpenGLES20GettingStarted;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-public class TERenderTarget {
+public class RenderTarget {
 	private final int MAX_BUFFERS = 2;
 	
 	private int mFrameBuffer;
@@ -26,7 +26,7 @@ public class TERenderTarget {
     
 	ShaderData mShaderData = new ShaderData();
 	
-	public TERenderTarget(int frameBuffer, float r, float g, float b, float a) {
+	public RenderTarget(int frameBuffer, float r, float g, float b, float a) {
 		mR = r;
 		mG = g;
 		mB = b;

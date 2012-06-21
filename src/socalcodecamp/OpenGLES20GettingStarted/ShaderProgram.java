@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import android.opengl.GLES20;
 import android.util.Log;
 
-public abstract class TEShaderProgram {
+public abstract class ShaderProgram {
 	private String mVertexSource;
 	private String mFragmentSource;
 	public int mProgramId;
@@ -15,7 +15,7 @@ public abstract class TEShaderProgram {
     private int mAttribsInternal[];
     private LinkedList<String> mAttributes = new LinkedList<String>();
 
-	TEShaderProgram(String vertexSource, String fragmentSource) {
+	ShaderProgram(String vertexSource, String fragmentSource) {
 		setVertexSource(vertexSource);
 		setFragmentSource(fragmentSource);
 	}
@@ -54,7 +54,7 @@ public abstract class TEShaderProgram {
         
     }
 
-    public final void activate(TERenderTarget target) {
+    public final void activate(RenderTarget target) {
         
         GLES20.glUseProgram(mProgramId);
         
@@ -73,7 +73,7 @@ public abstract class TEShaderProgram {
     	mAttributes.add(attribute);
     }
     
-    public abstract void run(TERenderTarget target, PrimativeBuffer primatives);
+    public abstract void run(RenderTarget target, PrimativeBuffer primatives);
     
     private int loadShader(int shaderType, String source) {
         int shader = GLES20.glCreateShader(shaderType);
